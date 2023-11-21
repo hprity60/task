@@ -84,6 +84,7 @@ class _OutputPageState extends State<OutputPage> {
                 },
                 child: const Text('Output 2'),
               ),
+              const SizedBox(height: 20),
               CustomSearchTextField(
                 controller: searchController,
                 onChanged: (value) {
@@ -107,8 +108,14 @@ class _OutputPageState extends State<OutputPage> {
               ),
               const SizedBox(height: 20),
               _versions.isNotEmpty
-                  ? Text(isInput1Active ? 'Output-1' : 'Output-2')
+                  ? Text(
+                      isInput1Active ? 'Output-1' : 'Output-2',
+                      style: const TextStyle(
+                        decoration: TextDecoration.underline,
+                      ),
+                    )
                   : const Text(""),
+              const SizedBox(height: 20),
               Expanded(
                 child: GridView.builder(
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -128,12 +135,7 @@ class _OutputPageState extends State<OutputPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Text(
-                            '${version.title}',
-                            style: const TextStyle(
-                              decoration: TextDecoration.underline,
-                            ),
-                          ),
+                          Text('${version.title}'),
                         ],
                       ),
                     );
