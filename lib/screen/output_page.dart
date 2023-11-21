@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../model/android_version.dart';
 import 'widgets/custom_search_text_field.dart';
+import 'package:task/services/json_services.dart';
 
 class OutputPage extends StatefulWidget {
   const OutputPage({super.key});
@@ -63,24 +64,26 @@ class _OutputPageState extends State<OutputPage> {
             children: [
               ElevatedButton(
                 onPressed: () {
-                  List<AndroidVersion> versions = parseJson(input1);
+                  List<AndroidVersion> versions =
+                      JsonServices.parseJson(input1);
                   setState(() {
                     _versions = versions;
                     isInput1Active = true;
                   });
-                  printVersions(versions);
+                  JsonServices.printVersions(versions);
                 },
                 child: const Text('Output 1'),
               ),
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
-                  List<AndroidVersion> versions = parseJson(input2);
+                  List<AndroidVersion> versions =
+                      JsonServices.parseJson(input2);
                   setState(() {
                     _versions = versions;
                     isInput1Active = false;
                   });
-                  printVersions(versions);
+                  JsonServices.printVersions(versions);
                 },
                 child: const Text('Output 2'),
               ),
@@ -90,7 +93,7 @@ class _OutputPageState extends State<OutputPage> {
                 onChanged: (value) {
                   setState(() {
                     int searchId = int.tryParse(value) ?? 0;
-                    String? title = searchById(input1, searchId);
+                    String? title = JsonServices.searchById(input1, searchId);
                     if (title != null) {
                       log('Title for ID $searchId: $title');
                     } else {
@@ -149,52 +152,6 @@ class _OutputPageState extends State<OutputPage> {
     );
   }
 
-  List<AndroidVersion> parseJson(dynamic input) {
-    List<AndroidVersion> versions = [];
-
-    if (input is List) {
-      for (var item in input) {
-        if (item is Map) {
-          item.forEach((key, value) {
-            var id = value['id'];
-            var title = value['title'];
-            if (id != null && title != null) {
-              versions.add(AndroidVersion(id: id, title: title));
-            }
-          });
-        } else if (item is List) {
-          for (var subItem in item) {
-            var id = subItem['id'];
-            var title = subItem['title'];
-            if (id != null && title != null) {
-              versions.add(AndroidVersion(id: id, title: title));
-            }
-          }
-        }
-      }
-    }
-
-    return versions;
-  }
-
-  String? searchById(dynamic input, int searchId) {
-    if (input is List) {
-      for (var item in input) {
-        if (item is Map) {
-          for (var key in item.keys) {
-            var id = item[key]['id'];
-            var title = item[key]['title'];
-            if (id == searchId) {
-              return title;
-            }
-          }
-        }
-      }
-    }
-
-    return null;
-  }
-
   List<AndroidVersion> _searchVersions(int searchId) {
     List<AndroidVersion> searchResults = [];
     for (var version in _versions) {
@@ -203,11 +160,5 @@ class _OutputPageState extends State<OutputPage> {
       }
     }
     return searchResults;
-  }
-
-  void printVersions(List<AndroidVersion> versions) {
-    for (var version in versions) {
-      log('ID: ${version.id}, Title: ${version.title}');
-    }
   }
 }
