@@ -1,9 +1,15 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 import '../model/android_version.dart';
+import 'widgets/custom_search_text_field.dart';
 
 class OutputPage extends StatefulWidget {
+  const OutputPage({super.key});
+
   @override
+  // ignore: library_private_types_in_public_api
   _OutputPageState createState() => _OutputPageState();
 }
 
@@ -43,17 +49,15 @@ class _OutputPageState extends State<OutputPage> {
 
   List<AndroidVersion> _versions = [];
   List<AndroidVersion> _searchResults = [];
-
+  bool isInput1Active = true;
   final TextEditingController searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('Android Versions'),
-        ),
-        body: Center(
+    return Scaffold(
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -62,57 +66,75 @@ class _OutputPageState extends State<OutputPage> {
                   List<AndroidVersion> versions = parseJson(input1);
                   setState(() {
                     _versions = versions;
+                    isInput1Active = true;
                   });
                   printVersions(versions);
                 },
-                child: Text('Output 1'),
+                child: const Text('Output 1'),
               ),
+              const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
                   List<AndroidVersion> versions = parseJson(input2);
                   setState(() {
                     _versions = versions;
+                    isInput1Active = false;
                   });
                   printVersions(versions);
                 },
-                child: Text('Output 2'),
+                child: const Text('Output 2'),
               ),
-              ElevatedButton(
-                onPressed: () {
-                  int searchId = 2;
-                  String? title = searchById(input1, searchId);
-                  if (title != null) {
-                    print('Title for ID $searchId: $title');
-                  } else {
-                    print('ID $searchId not found');
-                  }
-                },
-                child: Text('Search By ID'),
-              ),
-              TextField(
+              CustomSearchTextField(
                 controller: searchController,
                 onChanged: (value) {
-                  int searchId = int.tryParse(value) ?? 0;
-                  String? title = searchById(input1, searchId);
-                  if (title != null) {
-                    print('Title for ID $searchId: $title');
-                  } else {
-                    print('ID $searchId not found');
-                  }
                   setState(() {
+                    int searchId = int.tryParse(value) ?? 0;
+                    String? title = searchById(input1, searchId);
+                    if (title != null) {
+                      log('Title for ID $searchId: $title');
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('ID $searchId not found'),
+                        ),
+                      );
+                      log('ID $searchId not found');
+                    }
+
                     _searchResults = _searchVersions(searchId);
                   });
                 },
               ),
+              const SizedBox(height: 20),
+              _versions.isNotEmpty
+                  ? Text(isInput1Active ? 'Output-1' : 'Output-2')
+                  : const Text(""),
               Expanded(
-                child: ListView.builder(
+                child: GridView.builder(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 4,
+                    crossAxisSpacing: 5.0,
+                    mainAxisSpacing: 5.0,
+                  ),
                   itemCount: _searchResults.isNotEmpty
                       ? _searchResults.length
                       : _versions.length,
                   itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Text(
-                        'ID: ${(_searchResults.isNotEmpty ? _searchResults[index].id : _versions[index].id) ?? ''}, Title: ${(_searchResults.isNotEmpty ? _searchResults[index].title : _versions[index].title) ?? ''}',
+                    final version = _searchResults.isNotEmpty
+                        ? _searchResults[index]
+                        : _versions[index];
+                    return Container(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            '${version.title}',
+                            style: const TextStyle(
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
+                        ],
                       ),
                     );
                   },
@@ -183,7 +205,7 @@ class _OutputPageState extends State<OutputPage> {
 
   void printVersions(List<AndroidVersion> versions) {
     for (var version in versions) {
-      print('ID: ${version.id}, Title: ${version.title}');
+      log('ID: ${version.id}, Title: ${version.title}');
     }
   }
 }
