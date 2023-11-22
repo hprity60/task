@@ -1,6 +1,8 @@
 # task
 
-A new Flutter project.
+A Simple JSON Parse Flutter project.
+
+flutter version: 3.10.5
 
 | Image 1 | Image 2 | Image 3 |
 |---------|---------|---------|
