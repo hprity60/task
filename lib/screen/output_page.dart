@@ -48,8 +48,8 @@ class _OutputPageState extends State<OutputPage> {
     ]
   ];
 
-  List<AndroidVersion> _versions = [];
-  List<AndroidVersion> _searchResults = [];
+  List<AndroidVersion?> _versions = [];
+  List<AndroidVersion?> _searchResults = [];
   bool isInput1Active = true;
   final TextEditingController searchController = TextEditingController();
 
@@ -64,7 +64,7 @@ class _OutputPageState extends State<OutputPage> {
             children: [
               ElevatedButton(
                 onPressed: () {
-                  List<AndroidVersion> versions =
+                  List<AndroidVersion?> versions =
                       JsonServices.parseJson(input1);
                   setState(() {
                     _versions = versions;
@@ -77,7 +77,7 @@ class _OutputPageState extends State<OutputPage> {
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
-                  List<AndroidVersion> versions =
+                  List<AndroidVersion?> versions =
                       JsonServices.parseJson(input2);
                   setState(() {
                     _versions = versions;
@@ -152,10 +152,10 @@ class _OutputPageState extends State<OutputPage> {
     );
   }
 
-  List<AndroidVersion> _searchVersions(int searchId) {
-    List<AndroidVersion> searchResults = [];
+  List<AndroidVersion?> _searchVersions(int searchId) {
+    List<AndroidVersion?> searchResults = [];
     for (var version in _versions) {
-      if (version.id == searchId) {
+      if (version?.id == searchId) {
         searchResults.add(version);
       }
     }

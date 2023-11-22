@@ -3,8 +3,8 @@ import 'dart:developer';
 import '../model/android_version.dart';
 
 class JsonServices {
-  static List<AndroidVersion> parseJson(dynamic input) {
-    List<AndroidVersion> versions = [];
+  static List<AndroidVersion?> parseJson(dynamic input) {
+    List<AndroidVersion?> versions = [];
 
     if (input is List) {
       for (var item in input) {
@@ -17,7 +17,7 @@ class JsonServices {
               var title = item["$i"]['title'];
               versions.add(AndroidVersion(id: id, title: title));
             } else {
-              versions.add(AndroidVersion());
+              versions.add(null);
             }
           }
         } else if (item is List) {
@@ -53,9 +53,9 @@ class JsonServices {
     return null;
   }
 
-  static void printVersions(List<AndroidVersion> versions) {
+  static void printVersions(List<AndroidVersion?> versions) {
     for (var version in versions) {
-      log('ID: ${version.id}, Title: ${version.title}');
+      log('ID: ${version?.id}, Title: ${version?.title}');
     }
   }
 }
