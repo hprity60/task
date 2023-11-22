@@ -138,7 +138,7 @@ class _OutputPageState extends State<OutputPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Text('${version.title}'),
+                          version == null ? Text('') : Text('${version.title}'),
                         ],
                       ),
                     );

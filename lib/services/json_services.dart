@@ -9,13 +9,17 @@ class JsonServices {
     if (input is List) {
       for (var item in input) {
         if (item is Map) {
-          item.forEach((key, value) {
-            var id = value['id'];
-            var title = value['title'];
-            if (id != null && title != null) {
+          int maxLength = int.parse(item.keys.last) + 1;
+
+          for (var i = 0; i < maxLength; i++) {
+            if (item["$i"] != null) {
+              var id = item["$i"]["id"];
+              var title = item["$i"]['title'];
               versions.add(AndroidVersion(id: id, title: title));
+            } else {
+              versions.add(AndroidVersion());
             }
-          });
+          }
         } else if (item is List) {
           for (var subItem in item) {
             var id = subItem['id'];
